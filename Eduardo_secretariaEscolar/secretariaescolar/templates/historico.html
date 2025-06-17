@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Histórico Acadêmico</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container {
+            background: #fff;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 32px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h1 { color: #2c3e50; margin-bottom: 16px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background: #2980b9; color: #fff; }
+        .baixar { display: block; text-align: right; margin-bottom: 16px; }
+        .baixar a { color: #2980b9; text-decoration: none; font-weight: bold; }
+        .alerta { color: #e74c3c; font-weight: bold; margin: 16px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Histórico Acadêmico</h1>
+        <div class="baixar">
+            <a href="/historico/pdf/">&#128190; Baixar PDF</a>
+        </div>
+        <h2>Notas</h2>
+        <table>
+            <tr>
+                <th>Turma</th>
+                <th>Disciplina</th>
+                <th>Nota de Presença</th>
+                <th>Nota de Atividade</th>
+                <th>Nota Avaliativa</th>
+                <th>Nota Final</th>
+            </tr>
+            {% for g in grades %}
+            <tr>
+                <td>{{ g.classs }}</td>
+                <td>{{ g.matter }}</td>
+                <td>{{ g.grade_presence }}</td>
+                <td>{{ g.grade_activity }}</td>
+                <td>{{ g.grade_evaluative }}</td>
+                <td>{{ g.grade_final }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if not grades %}
+            <p>Nenhuma nota encontrada.</p>
+        {% endif %}
+        <h2>Faltas</h2>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Motivo</th>
+            </tr>
+            {% for f in faltas %}
+            <tr>
+                <td>{{ f.data }}</td>
+                <td>{{ f.motivo }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if not faltas %}
+            <p>Nenhuma falta registrada.</p>
+        {% endif %}
+        {% if faltas_excesso %}
+            <div class="alerta">Atenção: Número excessivo de faltas! Os responsáveis foram notificados.</div>
+        {% endif %}
+        <h2>Advertências</h2>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Motivo</th>
+            </tr>
+            {% for adv in advertencias %}
+            <tr>
+                <td>{{ adv.data }}</td>
+                <td>{{ adv.motivo }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if not advertencias %}
+            <p>Nenhuma advertência registrada.</p>
+        {% endif %}
+        <h2>Suspensões</h2>
+        <table>
+            <tr>
+                <th>Data</th>
+                <th>Motivo</th>
+                <th>Dias</th>
+            </tr>
+            {% for s in suspensoes %}
+            <tr>
+                <td>{{ s.data }}</td>
+                <td>{{ s.motivo }}</td>
+                <td>{{ s.dias }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% if not suspensoes %}
+            <p>Nenhuma suspensão registrada.</p>
+        {% endif %}
+        <h2>Impacto da Presença</h2>
+        <p>Sua média de presença é: <b>{{ media_presenca }}</b> (máximo 10)</p>
+        <p>Quanto maior a nota de presença, melhor seu desempenho final!</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório de Desempenho Acadêmico</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container {
+            background: #fff;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 32px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h1 { color: #2c3e50; margin-bottom: 16px; text-align: center; }
+        .alerta { color: #e74c3c; font-weight: bold; margin: 16px 0; }
+        canvas { margin: 24px 0; }
+        .voltar { display: block; text-align: center; margin-top: 24px; }
+        .voltar a { color: #2980b9; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Desempenho Acadêmico</h1>
+        {% if alertas %}
+            <div class="alerta">Áreas que precisam de atenção:<br>{{ alertas|safe }}</div>
+        {% endif %}
+        <canvas id="graficoNotas" width="600" height="300"></canvas>
+        <div class="voltar"><a href="/dashboard/">&larr; Voltar ao Dashboard</a></div>
+    </div>
+    <script>
+        const ctx = document.getElementById('graficoNotas').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ labels|safe }},
+                datasets: [{
+                    label: 'Média das Notas',
+                    data: {{ medias|safe }},
+                    backgroundColor: '#2980b9',
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 10 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
