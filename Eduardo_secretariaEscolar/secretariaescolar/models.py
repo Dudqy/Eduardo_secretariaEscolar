@@ -383,3 +383,4 @@ class Evento(models.Model):
         verbose_name_plural = "Eventos"
     def __str__(self):
         return f"{self.titulo} - {self.data:%d/%m/%Y %H:%M}"
+#teste tropa
