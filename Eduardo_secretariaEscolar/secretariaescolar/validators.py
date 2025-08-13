@@ -4,10 +4,7 @@ from validate_docbr import CPF
 
 
 def cpf_validator(value):
-    """
-    Valida se o CPF informado é válido.
-    Aceita apenas números, sem pontos ou traços.
-    """
+    # Valida se o CPF informado é válido. Aceita apenas números, sem pontos ou traços.
     cpf = CPF()
     if not cpf.validate(value):
         raise ValidationError(
@@ -17,9 +14,7 @@ def cpf_validator(value):
 
 
 def cep_validator(value):
-    """
-    Valida se o CEP informado possui 8 dígitos numéricos.
-    """
+    # Valida se o CEP informado possui 8 dígitos numéricos.
     if not len(value) == 8:
         raise ValidationError(
             ("O CEP '%(value)s' deve conter 8 dígitos numéricos."),
@@ -34,9 +29,7 @@ def cep_validator(value):
 
 
 def phone_validator(value):
-    """
-    Valida se o telefone está no formato (XX) 9XXXX-XXXX.
-    """
+    # Valida se o telefone está no formato (XX) 9XXXX-XXXX.
     pattern = r"^\(\d{2}\) 9\d{4}-\d{4}$"
     if not re.match(pattern, value):
         raise ValidationError(
@@ -46,9 +39,7 @@ def phone_validator(value):
 
 
 def validate_nota(value):
-    """
-    Valida se a nota está entre 0 e 10.
-    """
+    # Valida se a nota está entre 0 e 10.
     if not (0 <= value <= 10):
         raise ValidationError(
             f"Nota inválida: {value}. A nota deve estar entre 0 e 10."
