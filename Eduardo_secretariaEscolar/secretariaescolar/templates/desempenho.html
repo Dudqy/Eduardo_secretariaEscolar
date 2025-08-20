@@ -23,23 +23,29 @@
 </head>
 <body>
     <div class="container">
-        <h1>Desempenho Acadêmico</h1>
+        <a href="/" style="display:inline-block;margin-bottom:8px;"><img src="{% static 'secretariaescolar/logo.svg' %}" alt="Logo do Sistema de Gerenciamento Acadêmico" style="width:90px;"></a>
+        <h1 style="margin-bottom: 16px;">Sistema de Gerenciamento Acadêmico</h1>
+        <h2 style="margin-bottom: 24px;">Desempenho Acadêmico</h2>
         {% if alertas %}
             <div class="alerta">Áreas que precisam de atenção:<br>{{ alertas|safe }}</div>
         {% endif %}
         <canvas id="graficoNotas" width="600" height="300"></canvas>
         <div class="voltar"><a href="/dashboard/">&larr; Voltar ao Dashboard</a></div>
     </div>
+    {{ labels|default:'[]'|json_script:'labels-data' }}
+    {{ medias|default:'[]'|json_script:'medias-data' }}
     <script>
         const ctx = document.getElementById('graficoNotas').getContext('2d');
+        const labels = JSON.parse(document.getElementById('labels-data').textContent);
+        const medias = JSON.parse(document.getElementById('medias-data').textContent);
         const chart = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: {{ labels|safe }},
+                labels: labels,
                 datasets: [{
                     label: 'Média das Notas',
-                    data: {{ medias|safe }},
-                    backgroundColor: '#2980b9',
+                    data: medias,
+                    backgroundColor: '#2980b9'
                 }]
             },
             options: {
