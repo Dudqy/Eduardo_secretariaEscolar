@@ -1,11 +1,48 @@
+from django.contrib.auth.decorators import login_required
+# Painel de Faltas e Presenças do aluno
+@login_required
+def painel_faltas(request):
+    try:
+        aluno = Student.objects.get(full_name=request.user.get_full_name())
+    except Student.DoesNotExist:
+        aluno = None
+    faltas = aluno.faltas.all() if aluno else []
+    turma = None
+    if aluno:
+        grades = Grade.objects.filter(student=aluno)
+        turma = grades[0].classs if grades else None
+    # Valores fictícios para exemplo
+    aulas_previstas = 200
+    aulas_assistidas = aulas_previstas - len(faltas)
+    # Dados para gráfico (exemplo: faltas por mês)
+    from collections import Counter
+    import calendar
+    meses = [calendar.month_abbr[i] for i in range(1, 13)]
+    faltas_por_mes = [0]*12
+    if faltas:
+        contagem = Counter([f.data.month for f in faltas])
+        for i in range(1, 13):
+            faltas_por_mes[i-1] = contagem.get(i, 0)
+    context = {
+        'aluno': aluno,
+        'turma': turma,
+        'faltas_total': len(faltas),
+        'faltas': faltas,
+        'meses': meses,
+        'faltas_por_mes': faltas_por_mes,
+        'aulas_previstas': aulas_previstas,
+        'aulas_assistidas': aulas_assistidas,
+    }
+    return render(request, 'painel_faltas.html', context)
+
 # Importa as views de login/logout do Django
 from django.contrib.auth.views import LoginView, LogoutView
+# Decorador para exigir login do usuário (importado antes de qualquer uso)
+from django.contrib.auth.decorators import login_required
 # Funções para renderizar páginas e redirecionar
 from django.shortcuts import render, redirect
 # Para criar rotas/URLs
 from django.urls import path
-# Decorador para exigir login do usuário
-from django.contrib.auth.decorators import login_required
 # Importa os modelos usados nas views
 from .models import Grade, Student, Class, Matter, Professor
 # Para respostas HTTP (ex: PDF)
@@ -204,4 +241,5 @@ urlpatterns = [
     path('historico/pdf/', historico_pdf, name='historico_pdf'),  # PDF do histórico
     path('login/', CustomLoginView.as_view(), name='login'),  # Login
     path('logout/', LogoutView.as_view(next_page='login'), name='logout'),  # Logout
+    path('painel-faltas/', painel_faltas, name='painel_faltas'),  # Painel de faltas e presenças
 ]

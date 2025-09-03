@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Painel de Faltas e Presenças</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container {
+            background: #fff;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 32px 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        h1 { color: #2c3e50; margin-bottom: 16px; }
+        h2 { color: #2c3e50; margin-top: 32px; }
+        .info { margin-bottom: 24px; }
+        .info b { color: #222; }
+        .faltas-table { width: 100%; border-collapse: collapse; margin: 24px 0; }
+        .faltas-table th, .faltas-table td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        .faltas-table th { background: #2980b9; color: #fff; }
+        .grafico {
+            width: 100%;
+            height: 350px;
+            background: #fff;
+            border: 1px solid #eee;
+            margin-bottom: 32px;
+        }
+        .voltar { margin-top: 24px; }
+        .voltar a { color: #2980b9; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" style="display:inline-block;margin-bottom:8px;"><img src="{% static 'secretariaescolar/logo.svg' %}" alt="Logo do Sistema de Gerenciamento Acadêmico" style="width:90px;"></a>
+        <h1>Painel de Faltas e Presenças</h1>
+        <div class="info">
+            <b>Aluno:</b> {{ aluno.full_name }}<br>
+            <b>Turma:</b> {{ turma }}<br>
+            <b>Faltas totais:</b> {{ faltas_total }}<br>
+            <b>Aulas previstas:</b> {{ aulas_previstas }}<br>
+            <b>Aulas assistidas:</b> {{ aulas_assistidas }}
+        </div>
+        <h2>Relatório Gráfico de Frequência</h2>
+        <div class="grafico">
+            <!-- Aqui pode ser inserido um gráfico com Chart.js ou imagem -->
+            <canvas id="graficoFaltas"></canvas>
+        </div>
+        <h2>Histórico de Faltas</h2>
+        <table class="faltas-table">
+            <tr>
+                <th>Data</th>
+                <th>Motivo</th>
+            </tr>
+            {% for falta in faltas %}
+            <tr>
+                <td>{{ falta.data }}</td>
+                <td>{{ falta.motivo }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="2">Nenhuma falta registrada.</td></tr>
+            {% endfor %}
+        </table>
+        <div class="voltar">
+            <a href="/historico/">&#8592; Voltar ao Histórico Acadêmico</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {# Passa arrays como JSON seguro para o JS #}
+    {{ meses|json_script:"meses-data" }}
+    {{ faltas_por_mes|json_script:"faltas-data" }}
+    <script>
+        var ctx = document.getElementById('graficoFaltas').getContext('2d');
+        var meses = JSON.parse(document.getElementById('meses-data').textContent);
+        var faltasPorMes = JSON.parse(document.getElementById('faltas-data').textContent);
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: meses,
+                datasets: [
+                    {
+                        label: 'Faltas',
+                        data: faltasPorMes,
+                        backgroundColor: 'rgba(231, 76, 60, 0.7)'
+                    }
+                ]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
